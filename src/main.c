@@ -29,7 +29,6 @@ void processFlags(int argc, char **argv, Machine *m)
 int main(int argc, char **argv)
 {
 	Machine m = initMachine();
-	loadImage("forthdump", &m);
 	processFlags(argc, argv, &m);
 	run(&m);
 	writeImage(&m, "forthdump");
