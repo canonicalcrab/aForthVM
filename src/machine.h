@@ -9,32 +9,32 @@ enum opcodes {
 	op_nop,				/* 0 */
 	op_dup,				/* 1 */
 	op_literal,			/* 2 */
-	op_drop,				/* 3 */
-	op_push,				/* 4 */
+	op_drop,			/* 3 */
+	op_push,			/* 4 */
 	op_pop,				/* 5 */
 	op_jmp,				/* 6 */
 	op_if,				/* 7 */
-	op_call,				/* 8 */
+	op_call,			/* 8 */
 	op_return,			/* 9 */
 	op_equal,			/* a */
 	op_inequal,			/* b */
-	op_less,				/* c */
+	op_less,			/* c */
 	op_greater,			/* d */
 	op_at,				/* e */
 	op_store,			/* f */
 	op_add,				/* 10 */
-	op_subtract,		/* 11 */
-	op_multiply,		/* 12 */
+	op_subtract,			/* 11 */
+	op_multiply,			/* 12 */
 	op_mulrat,			/* 13 */
 	op_and,				/* 14 */
 	op_or,				/* 15 */
 	op_xor,				/* 16 */
 	op_not,				/* 17 */
 	op_double,			/* 18 */
-	op_half,				/* 19 */
-	op_baseaddress,	/* 1a */
+	op_half,			/* 19 */
+	op_baseaddress,			/* 1a */
 	op_syscall,			/* 1b */
-	op_quit,				/* 1c */
+	op_quit,			/* 1c */
 	op_error,			/* 1d */
 };
 
