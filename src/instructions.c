@@ -1,0 +1,285 @@
+/* The instruction set is listed in machine.h,
+ * functionality is implemented here. The rest
+ * of the machine is implemented in machine.c */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdint.h>
+
+#include "machine.h"
+
+void vm_nop(Machine *m)
+{
+
+}
+
+void vm_dup(Machine *m)
+{
+	CELL tos = m->ds[m->dp];
+	m->dp++;
+	m->ds[m->dp] = tos;
+}
+
+void vm_literal(Machine *m)
+{
+	m->dp++;
+	m->ip++;
+	m->ds[m->dp] = m->memory[m->ip];
+}
+
+void vm_drop(Machine *m)
+{
+	m->dp--;
+}
+
+void vm_push(Machine *m)
+{
+	m->rp++;
+	m->rs[m->rp] = m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_pop(Machine *m)
+{
+	m->dp++;
+	m->ds[m->dp] = m->rs[m->rp];
+	m->rp--;
+}
+
+void vm_jmp(Machine *m)
+{
+	m->ip = m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_if(Machine *m)
+{
+	if(m->ds[m->dp]) {
+		m->ip = m->ds[m->dp - 1];
+	} else {
+		m->ip = m->ds[m->dp - 2];
+	}
+	m->ip -= 1; /* don't increment ip after if */
+	m->dp -= 3;
+}
+
+void vm_call(Machine *m)
+{
+	m->rp++;
+	m->rs[m->rp] = m->ip;
+	m->ip = m->ds[m->dp] - 1;
+	vm_drop(m);
+}
+
+void vm_return(Machine *m)
+{
+	m->ip = m->rs[m->rp];
+	m->rp--;
+}
+
+void vm_equal(Machine *m)
+{
+	if(m->ds[m->dp] == m->ds[m->dp - 1]){
+		vm_drop(m);
+		m->ds[m->dp] = 1;
+	} else {
+		vm_drop(m);
+		m->ds[m->dp] = 0;
+	}
+}
+
+void vm_inequal(Machine *m)
+{
+	if(m->ds[m->dp] != m->ds[m->dp - 1]){
+		vm_drop(m);
+		m->ds[m->dp] = 1;
+	} else {
+		vm_drop(m);
+		m->ds[m->dp] = 0;
+	}
+}
+
+void vm_less(Machine *m)
+{
+	if(m->ds[m->dp] < m->ds[m->dp - 1]){
+		vm_drop(m);
+		m->ds[m->dp] = 1;
+	} else {
+		vm_drop(m);
+		m->ds[m->dp] = 0;
+	}
+}
+
+void vm_greater(Machine *m)
+{
+	if(m->ds[m->dp] > m->ds[m->dp - 1]){
+		vm_drop(m);
+		m->ds[m->dp] = 1;
+	} else {
+		vm_drop(m);
+		m->ds[m->dp] = 0;
+	}
+}
+
+void vm_at(Machine *m)
+{
+	m->ds[m->dp] = m->memory[m->ds[m->dp]];
+}
+
+void vm_store(Machine *m)
+{
+	m->memory[m->ds[m->dp]] = m->ds[m->dp -1];
+	vm_drop(m);
+}
+
+void vm_add(Machine *m)
+{
+	m->ds[m->dp - 1] += m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_subtract(Machine *m)
+{
+	m->ds[m->dp - 1] -= m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_multiply(Machine *m)
+{
+	m->ds[m->dp - 1] *= m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_mulrat(Machine *m)
+{
+	m->ds[m->dp - 2] = 
+		m->ds[m->dp] *
+		m->ds[m->dp - 1] / m->ds[m->dp - 2];
+	m->dp -= 2;
+}
+
+void vm_and(Machine *m)
+{
+	m->ds[m->dp - 1] &= m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_or(Machine *m)
+{
+	m->ds[m->dp - 1] |= m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_xor(Machine *m)
+{
+	m->ds[m->dp - 1] ^= m->ds[m->dp];
+	vm_drop(m);
+}
+
+void vm_not(Machine *m)
+{
+	m->ds[m->dp] = ~m->ds[m->dp];
+}
+
+void vm_double(Machine *m)
+{
+	m->ds[m->dp] >>= 1;
+}
+
+void vm_half(Machine *m)
+{
+	m->ds[m->dp] <<= 1;
+}
+
+void vm_baseaddress(Machine *m)
+{
+	m->dp++;
+	m->ds[m->dp] = (CELL) m->memory;
+}
+
+void vm_syscall(Machine *m)
+{
+	int ret;
+	switch (m->ds[m->dp]) {
+	case 1:
+		ret = syscall(m->ds[m->dp - 1]);
+		m->dp -= 2;
+		m->ds[m->dp] = ret;
+		break;
+	case 2:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2]);
+		m->dp -= 3;
+		m->ds[m->dp] = ret;
+		break;
+	case 3:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2],  /* DIFFERENT */
+			m->ds[m->dp - 3],
+			m->ds[m->dp - 4]);
+		m->dp -= 4;
+		m->ds[m->dp] = ret;
+		break;
+	case 4:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2],
+			m->ds[m->dp - 3],
+			m->ds[m->dp - 4]);
+		m->dp -= 5;
+		m->ds[m->dp] = ret;
+	case 5:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2],
+			m->ds[m->dp - 3],
+			m->ds[m->dp - 4],
+			m->ds[m->dp - 5]);
+		m->dp -= 6;
+		m->ds[m->dp] = ret;
+	case 6:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2],
+			m->ds[m->dp - 3],
+			m->ds[m->dp - 4],
+			m->ds[m->dp - 5],
+			m->ds[m->dp - 6]);
+		m->dp -= 7;
+		m->ds[m->dp] = ret;
+	case 7:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2],
+			m->ds[m->dp - 3],
+			m->ds[m->dp - 4],
+			m->ds[m->dp - 5],
+			m->ds[m->dp - 6],
+			m->ds[m->dp - 7]);
+		m->dp -= 8;
+		m->ds[m->dp] = ret;
+	case 8:
+		ret = syscall(m->ds[m->dp - 1],
+			m->ds[m->dp - 2],
+			m->ds[m->dp - 3],
+			m->ds[m->dp - 4],
+			m->ds[m->dp - 5],
+			m->ds[m->dp - 6],
+			m->ds[m->dp - 7],
+			m->ds[m->dp - 8]);
+		m->dp -= 9;
+		m->ds[m->dp] = ret;
+	default:
+		printf("WRONG ARGUMENT COUNT FOR SYSCALL\n");
+		exit(1);
+	}
+}
+
+void vm_quit(Machine *m)
+{
+	m->ip = MEMORY - 1;
+}
+
+void vm_error(Machine *m)
+{
+	printf("VM ERROR: %lu\n", m->ds[m->dp]);
+	exit(1);
+}
+
