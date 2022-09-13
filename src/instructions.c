@@ -21,7 +21,7 @@ void vm_dup(Machine *m)
 	m->ds[m->dp] = tos;
 }
 
-void vm_literal(Machine *m)
+void vm_lit(Machine *m)
 {
 	m->dp++;
 	m->ip++;
@@ -72,13 +72,13 @@ void vm_call(Machine *m)
 	vm_drop(m);
 }
 
-void vm_return(Machine *m)
+void vm_ret(Machine *m)
 {
 	m->ip = m->rs[m->rp];
 	m->rp--;
 }
 
-void vm_equal(Machine *m)
+void vm_eq(Machine *m)
 {
 	if(m->ds[m->dp] == m->ds[m->dp - 1]){
 		vm_drop(m);
@@ -89,7 +89,7 @@ void vm_equal(Machine *m)
 	}
 }
 
-void vm_inequal(Machine *m)
+void vm_ineq(Machine *m)
 {
 	if(m->ds[m->dp] != m->ds[m->dp - 1]){
 		vm_drop(m);
@@ -100,7 +100,7 @@ void vm_inequal(Machine *m)
 	}
 }
 
-void vm_less(Machine *m)
+void vm_lt(Machine *m)
 {
 	if(m->ds[m->dp] < m->ds[m->dp - 1]){
 		vm_drop(m);
@@ -111,7 +111,7 @@ void vm_less(Machine *m)
 	}
 }
 
-void vm_greater(Machine *m)
+void vm_gt(Machine *m)
 {
 	if(m->ds[m->dp] > m->ds[m->dp - 1]){
 		vm_drop(m);
@@ -139,24 +139,22 @@ void vm_add(Machine *m)
 	vm_drop(m);
 }
 
-void vm_subtract(Machine *m)
+void vm_sub(Machine *m)
 {
 	m->ds[m->dp - 1] -= m->ds[m->dp];
 	vm_drop(m);
 }
 
-void vm_multiply(Machine *m)
+void vm_mul(Machine *m)
 {
 	m->ds[m->dp - 1] *= m->ds[m->dp];
 	vm_drop(m);
 }
 
-void vm_mulrat(Machine *m)
+void vm_div(Machine *m)
 {
-	m->ds[m->dp - 2] = 
-		m->ds[m->dp] *
-		m->ds[m->dp - 1] / m->ds[m->dp - 2];
-	m->dp -= 2;
+	m->ds[m->dp - 1] = m->ds[m->dp] / m->ds[m->dp - 1];
+	m->dp -= 1;
 }
 
 void vm_and(Machine *m)
@@ -182,12 +180,12 @@ void vm_not(Machine *m)
 	m->ds[m->dp] = ~m->ds[m->dp];
 }
 
-void vm_double(Machine *m)
+void vm_shr(Machine *m)
 {
 	m->ds[m->dp] >>= 1;
 }
 
-void vm_half(Machine *m)
+void vm_shl(Machine *m)
 {
 	m->ds[m->dp] <<= 1;
 }
@@ -277,9 +275,9 @@ void vm_quit(Machine *m)
 	m->ip = MEMORY - 1;
 }
 
-void vm_error(Machine *m)
+void vm_err(Machine *m)
 {
-	printf("VM ERROR: %lu\n", m->ds[m->dp]);
+	printf("VM ERROR: %llu\n", m->ds[m->dp]);
 	exit(1);
 }
 

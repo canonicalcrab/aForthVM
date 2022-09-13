@@ -32,20 +32,20 @@ void printData(Machine *m)
 {
 	printf("DATA: ");
 	for(int x = m->dp; x >= 0; x--)
-		printf("%lu ", m->ds[x]);
+		printf("%llu ", m->ds[x]);
 }
 
 void printReturn(Machine *m)
 {
 	printf("RETURN: ");
 	for(int x = m->rp; x >= 0; x--)
-		printf("%lu ", m->rs[x]);
+		printf("%llu ", m->rs[x]);
 }
 
 void step(Machine *m)
 {
 	if(m->debug > 0) {
-		printf("AT: %lu ", m->ip);
+		printf("AT: %llu ", m->ip);
 		printData(m);
 		printReturn(m);
 		printf("\n");
@@ -58,8 +58,8 @@ void step(Machine *m)
 	case op_dup:
 		vm_dup(m);
 		break;
-	case op_literal:
-		vm_literal(m);
+	case op_lit:
+		vm_lit(m);
 		break;
 	case op_drop:
 		vm_drop(m);
@@ -79,20 +79,20 @@ void step(Machine *m)
 	case op_call:
 		vm_call(m);
 		break;
-	case op_return:
-		vm_return(m);
+	case op_ret:
+		vm_ret(m);
 		break;
-	case op_equal:
-		vm_equal(m);
+	case op_eq:
+		vm_eq(m);
 		break;
-	case op_inequal:
-		vm_inequal(m);
+	case op_ineq:
+		vm_ineq(m);
 		break;
-	case op_less:
-		vm_less(m);
+	case op_lt:
+		vm_lt(m);
 		break;
-	case op_greater:
-		vm_greater(m);
+	case op_gt:
+		vm_gt(m);
 		break;
 	case op_at:
 		vm_at(m);
@@ -103,11 +103,11 @@ void step(Machine *m)
 	case op_add:
 		vm_add(m);
 		break;
-	case op_subtract:
-		vm_subtract(m);
+	case op_sub:
+		vm_sub(m);
 		break;
-	case op_multiply:
-		vm_multiply(m);
+	case op_mul:
+		vm_mul(m);
 		break;
 	case op_and:
 		vm_and(m);
@@ -121,11 +121,11 @@ void step(Machine *m)
 	case op_not:
 		vm_not(m);
 		break;
-	case op_double:
-		vm_double(m);
+	case op_shr:
+		vm_shr(m);
 		break;
-	case op_half:
-		vm_half(m);
+	case op_shl:
+		vm_shl(m);
 		break;
 	case op_baseaddress:
 		vm_baseaddress(m);
@@ -136,12 +136,12 @@ void step(Machine *m)
 	case op_quit:
 		vm_quit(m);
 		break;
-	case op_error:
-		vm_error(m);
+	case op_err:
+		vm_err(m);
 		break;
 
 	default:
-		printf("invalid opcode: %lu\n",
+		printf("invalid opcode: %llu\n",
 			m->memory[m->ip]);
 		exit(1);
 	}
