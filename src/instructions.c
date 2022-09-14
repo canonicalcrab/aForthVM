@@ -49,19 +49,18 @@ void vm_pop(Machine *m)
 
 void vm_jmp(Machine *m)
 {
-	m->ip = m->ds[m->dp];
+	m->ip = m->ds[m->dp] - 1;
+	/* subtract one to negate ip increment */
 	vm_drop(m);
 }
 
 void vm_if(Machine *m)
 {
 	if(m->ds[m->dp]) {
-		m->ip = m->ds[m->dp - 1];
-	} else {
-		m->ip = m->ds[m->dp - 2];
+		m->ip = m->ds[m->dp - 1] - 1;
+		/* subtract one to negate ip increment */
 	}
-	m->ip -= 1; /* don't increment ip after if */
-	m->dp -= 3;
+	m->dp -= 2;
 }
 
 void vm_call(Machine *m)
