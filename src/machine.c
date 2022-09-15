@@ -55,14 +55,17 @@ void step(Machine *m)
 	case op_nop:
 		vm_nop(m);
 		break;
-	case op_dup:
-		vm_dup(m);
-		break;
 	case op_lit:
 		vm_lit(m);
 		break;
+	case op_dup:
+		vm_dup(m);
+		break;
 	case op_drop:
 		vm_drop(m);
+		break;
+	case op_swap:
+		vm_swap(m);
 		break;
 	case op_push:
 		vm_push(m);
@@ -154,6 +157,8 @@ void step(Machine *m)
 	if((int) m->dp < 0){
 		printf("DATA STACK UNDERFLOW!\n");
 		exit(1);
+		/* May need to consider this for instructions that
+		 * use more than one item from the stack... */
 	}
 
 	m->ip++;

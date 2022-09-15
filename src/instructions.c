@@ -14,13 +14,6 @@ void vm_nop(Machine *m)
 
 }
 
-void vm_dup(Machine *m)
-{
-	CELL tos = m->ds[m->dp];
-	m->dp++;
-	m->ds[m->dp] = tos;
-}
-
 void vm_lit(Machine *m)
 {
 	m->dp++;
@@ -28,9 +21,23 @@ void vm_lit(Machine *m)
 	m->ds[m->dp] = m->memory[m->ip];
 }
 
+void vm_dup(Machine *m)
+{
+	CELL tos = m->ds[m->dp];
+	m->dp++;
+	m->ds[m->dp] = tos;
+}
+
 void vm_drop(Machine *m)
 {
 	m->dp--;
+}
+
+void vm_swap(Machine *m)
+{
+	CELL x = m->ds[m->dp];
+	m->ds[m->dp] = m->ds[m->dp - 1];
+	m->ds[m->dp - 1] = x;
 }
 
 void vm_push(Machine *m)

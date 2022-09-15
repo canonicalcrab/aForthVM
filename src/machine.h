@@ -7,35 +7,36 @@
 
 enum opcodes {
 	op_nop,				/* 0 */
-	op_dup,				/* 1 */
-	op_lit,				/* 2 */
+	op_lit,				/* 1 */
+	op_dup,				/* 2 */
 	op_drop,			/* 3 */
-	op_push,			/* 4 */
-	op_pop,				/* 5 */
-	op_jmp,				/* 6 */
-	op_if,				/* 7 */
-	op_call,			/* 8 */
-	op_ret,				/* 9 */
-	op_eq,				/* a */
-	op_ineq,			/* b */
-	op_lt,				/* c */
-	op_gt,				/* d */
-	op_at,				/* e */
-	op_store,			/* f */
-	op_add,				/* 10 */
-	op_sub,				/* 11 */
-	op_mul,				/* 12 */
-	op_div,				/* 13 */
-	op_and,				/* 14 */
-	op_or,				/* 15 */
-	op_xor,				/* 16 */
-	op_not,				/* 17 */
-	op_shr,				/* 18 */
-	op_shl,				/* 19 */
-	op_baseaddress,			/* 1a */
-	op_syscall,			/* 1b */
-	op_quit,			/* 1c */
-	op_err,				/* 1d */
+	op_swap,			/* 4 */
+	op_push,			/* 5 */
+	op_pop,				/* 6 */
+	op_jmp,				/* 7 */
+	op_if,				/* 8 */
+	op_call,			/* 9 */
+	op_ret,				/* a */
+	op_eq,				/* b */
+	op_ineq,			/* c */
+	op_lt,				/* d */
+	op_gt,				/* e */
+	op_at,				/* f */
+	op_store,			/* 10 */
+	op_add,				/* 11 */
+	op_sub,				/* 12 */
+	op_mul,				/* 13 */
+	op_div,				/* 14 */
+	op_and,				/* 15 */
+	op_or,				/* 16 */
+	op_xor,				/* 17 */
+	op_not,				/* 18 */
+	op_shr,				/* 19 */
+	op_shl,				/* 1a */
+	op_baseaddress,			/* 1b */
+	op_syscall,			/* 1c */
+	op_quit,			/* 1d */
+	op_err,				/* 1e */
 };
 
 typedef struct Machine {
@@ -49,9 +50,10 @@ typedef struct Machine {
 } Machine;
 
 void vm_nop(Machine *m);
-void vm_dup(Machine *m);
 void vm_lit(Machine *m);
+void vm_dup(Machine *m);
 void vm_drop(Machine *m);
+void vm_swap(Machine *m);
 void vm_push(Machine *m);
 void vm_pop(Machine *m);
 void vm_jmp(Machine *m);
